@@ -1,0 +1,53 @@
+name: deploy na GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preuzmi repozitorij
+        uses: actions/checkout@v4
+
+      - name: Postavi Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instaliraj zavisnosti
+        run: pip install -r requirements.txt
+
+      - name: Izgradi sajt (staje na prekinute linkove)
+        run: mkdocs build --strict
+
+      - name: Pošalji artefakt za Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Objavi na GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

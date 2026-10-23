@@ -1,6 +1,7 @@
 site_name: Portfolio | BSc Inženjerski Projekti
 site_description: Pregled tehničkih i inženjerskih projekata sa Bachelor studija.
 site_author: Emir
+site_url: https://ekrdzo.github.io/portfolio/
 
 theme:
   name: material
