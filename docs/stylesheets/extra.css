@@ -60,3 +60,61 @@
 .gallery--narrow {
   max-width: 34rem;
 }
+
+/* Back-to-top button, enabled by the navigation.top theme feature.
+
+   Material pins it to the top edge of the viewport and centres it over the
+   text column: position fixed, top 3.2rem, a 50% inline margin and
+   transform translate(-50%) — translate(50%) below 1220 px.
+
+   The bottom-right corner is where a scroll-to-top control is expected, and
+   it stays clear of the tab bar up top. A fixed element is positioned against
+   the viewport, so `right` alone pins it to the window edge — but the base
+   centring has to be neutralised first or the margin and transform fight the
+   anchor and pull the button back toward the middle.
+
+   The !important on `top` is load-bearing, not a habit: the theme's script
+   writes style="top: …" onto the button itself, and an inline style outranks a
+   stylesheet declaration of any specificity. Without it the button keeps
+   `bottom` from here but stays stretched between the script's `top` and our
+   `bottom`, which renders it as a tall bar down the right edge instead of a
+   pill in the corner.
+*/
+.md-top {
+  top: auto !important;
+  bottom: 1.6rem;
+  left: auto;
+  right: 1.6rem;
+  margin: 0;
+  transform: none;
+}
+
+/* Appearance while hidden, which the theme drives from the `hidden` attribute:
+   `.md-top[hidden]` in main.css sets opacity 0, kills pointer events and zeroes
+   the transition duration. javascripts/back-to-top.js decides visibility from
+   the scroll position instead, so cancel that rule here — otherwise the theme
+   would fade the button out shortly after every scroll, however it is styled
+   elsewhere. The horizontal centreing of the base rule stays neutralised by
+   `transform: none` above; the entrance offset lives on the vertical axis in
+   the rule below. */
+.md-top[hidden] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition-duration: 125ms;
+}
+
+/* Hidden state. `visibility` rather than opacity alone keeps an invisible
+   button out of the tab order and out of the accessibility tree, which is what
+   the theme otherwise does from its own script with `tabindex="-1"`. The delay
+   on `visibility` lets the fade finish before the button stops responding to
+   input; on the way back it applies immediately, so the button is interactive
+   from the first painted frame. */
+.md-top:not(.is-visible) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(0.2rem);
+  transition: color 125ms, background-color 125ms, opacity 125ms,
+    transform 125ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 125ms;
+}

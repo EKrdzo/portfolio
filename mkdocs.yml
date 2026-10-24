@@ -18,7 +18,9 @@ theme:
         name: Switch to light mode
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
+    - navigation.top
     - content.code.copy
 
 markdown_extensions:
@@ -39,12 +41,13 @@ extra_css:
   - stylesheets/extra.css
 
 extra_javascript:
+  - javascripts/back-to-top.js
   - javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
   - Home: index.md
-  - Microgrids & BESS: projekti/microgrids.md
+  - Microgrid & Power Electronics: projekti/microgrids.md
   - PLC & Automation: projekti/plc-automation.md
   - Signal Processing & Simulation: projekti/obrada-signala.md
   - Embedded & FPGA: projekti/embedded-fpga.md
