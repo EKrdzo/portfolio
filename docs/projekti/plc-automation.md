@@ -1,86 +1,89 @@
-# PLC & Automatizacija
+# PLC & Automation
 
-Projektovanje i programiranje industrijskih upravljačkih sistema: **Schneider** PLC + frekventni invertor + **HMI**, te primjena **dvopoložajne (on/off) regulacije** na programabilnom releju.
+Design and programming of industrial control systems: a **Schneider** PLC + variable-frequency drive + **HMI**, and **two-position (on/off) control** implemented on a programmable relay.
 
 ---
 
-## Projektovanje elektro-energetskog i upravljačkog dijela postrojenja za regulaciju brzine asinhronog motora
+## Design of the power supply and control side of a speed-control plant for an induction motor
 
-**Predmet:** Industrijska automatizacija · mentor: doc. dr Nedim Osmić · ekspert: Hujdur Muhidin · asistent: Tarik Pozderac · 2025/26.
-**Tim:** E. Krdžalić, S. Muratagić, A. Šabić · uloga: programiranje PLC–invertor komunikacije i HMI vizualizacije
+**Course:** Industrial Automation · supervisor: Assistant Professor Nedim Osmić, PhD · expert: Hujdur Muhidin · assistant: Tarik Pozderac · 2025/26.
+**Team:** E. Krdžalić, S. Muratagić, A. Šabić · role: programming the PLC–drive communication and the HMI visualisation
 
-!!! abstract "U jednoj rečenici"
-    Kompletno postrojenje — **TM200CE24T** PLC, **ATV12H055M2** frekventni invertor i **HMISTU855** touch HMI — projektovano je od principijelne sheme i predračuna do Modbus komunikacije, drive funkcionalnih blokova i višekranskog HMI projekta sa upravljačkim grupama i lozinkama.
+!!! abstract "In one sentence"
+    A complete plant — **TM200CE24T** PLC, **ATV12H055M2** variable-frequency drive and **HMISTU855** touch HMI — was designed from the wiring diagram and cost estimate through to Modbus communication, drive function blocks and a multi-screen HMI project with user groups and passwords.
 
 ### Problem
 
-Regulacija brzine asinhronog motora najčešće se radi frekventnim invertorom, ali sam invertor nije sistem — potrebno je definisati čitav napojni lanac (zaštita, razdvajanje, E-STOP), komunikaciju između PLC-a i invertora te operatersku vizualizaciju s hijerarhijom prava pristupa. Zadatak je bio projektovati **cio lanac**: elektro shema → hardver s predračunom → PLC logika → Modbus → HMI.
+Speed control of an induction motor is usually done with a variable-frequency drive, but the drive alone is not a system: the whole supply chain has to be defined (protection, isolation, E-STOP), along with communication between the PLC and the drive, and an operator visualisation with a hierarchy of access rights. The task was to design **the entire chain**: wiring diagram → hardware with cost estimate → PLC logic → Modbus → HMI.
 
-### Principijelna shema
+### Wiring diagram
 
-![Principijelna shema postrojenja](../images/ia/principijelna-shema.png)
+![Wiring diagram of the plant](../images/ia/principijelna-shema.png)
 
-Napojni dio ide preko glavnog prekidača i osigurača na **ATV12** invertor, pa preko Kontaktdora **CA3SK20BD** na asinhroni motor; upravljački dio napaja se 24 V DC napajanjem zaštićenim **FID sklopkom (300 mA)**.
+The supply side runs from the main switch and fuses to the **ATV12** drive and from there through a **CA3SK20BD** contactor to the induction motor; the control side is fed from a 24 V DC supply protected by an **RCD (300 mA)**.
 
-| Komponenta | Oznaka / model | Uloga |
+| Component | Type / model | Role |
 | --- | --- | --- |
-| PLC | **Schneider TM200CE24T** (Modicon M221) | glavni upravljački uređaj, Machine Expert Basic |
-| Frekventni invertor | **Schneider ATV12H055M2** (1,5 kW / 230 V) | regulacija brzine, metoda **U/f = const** |
-| HMI | **Schneider HMISTU855**, 5,7" touch | vizualizacija i upravljanje, Vijeo Designer |
-| Komunikacija | **RJ45 / Modbus** (RS-485 serialni port invertora) | PLC → ATV12 reference i komande |
-| Glavni kontaktor | **CA3SK20BD** | priključenje motora, upravljan iz PLC izlaza |
-| Motor zaštita | **RSL1PRBU** termički relej | zaštita od preopterećenja |
-| E-STOP | **Harmony XB5** (gribolica) | hitno zaustavljanje, hardverski lanac |
-| Zaštita | osigurači **AC 10 A / AC 4 A / DC 2 A**, FID 300 mA | kratki spoj i dodir |
-| Napajanje | 24 V DC | upravljački krug PLC-a, HMI-ja, invertora |
+| PLC | **Schneider TM200CE24T** (Modicon M221) | main control unit, Machine Expert Basic |
+| Variable-frequency drive | **Schneider ATV12H055M2** (1.5 kW / 230 V) | speed control, **U/f = const** method |
+| HMI | **Schneider HMISTU855**, 5.7" touch | visualisation and control, Vijeo Designer |
+| Communication | **RJ45 / Modbus** (RS-485 serial port on the drive) | references and commands from PLC to ATV12 |
+| Main contactor | **CA3SK20BD** | motor connection, driven from a PLC output |
+| Motor protection | **RSL1PRBU** thermal overload relay | overload protection |
+| E-STOP | **Harmony XB5** (mushroom head) | emergency stop, hardwired circuit |
+| Protection | fuses **AC 10 A / AC 4 A / DC 2 A**, RCD 300 mA | short circuit and electric shock |
+| Power supply | 24 V DC | control circuit of the PLC, HMI and drive |
 
-![ATV12 frekventni invertor](../images/ia/atv12-frekventni-invertor.jpg)
-*ATV12H055M2 — podešavanje U/f karakteristike i Modbus adrese.*
+<div class="gallery gallery--square" markdown="1">
+
+![ATV12 variable-frequency drive](../images/ia/atv12-frekventni-invertor.jpg)
 
 ![Modicon TM200 PLC](../images/ia/tm200-plc.jpg)
-*TM200CE24T — 24 I/O tačke, ugrađeni Modbus port.*
 
 ![HMISTU855](../images/ia/hmistu855-hmi.jpg)
-*HMISTU855, 5,7" rezistivni touch ekran.*
 
-### Predračun (ukupno 2 824,10 KM)
+</div>
 
-| Stavka | Iznos (KM) |
+*ATV12H055M2 — U/f curve and Modbus address; TM200CE24T — 24 I/O points, built-in Modbus port; HMISTU855 — 5.7" resistive touch screen.*
+
+### Cost estimate (total KM 2,824.10)
+
+| Item | Amount (KM) |
 | --- | --- |
-| HMI HMISTU855 | 1 575,37 |
-| PLC TM200CE24T | 604,55 |
-| Invertor ATV12H055M2 | 460,30 |
-| Kontaktor CA3SK20BD | 70,31 |
-| Termorelej RSL1PRBU | 48,88 |
-| FID sklopka 300 mA | 41,10 |
-| Harmony XB5 (E-STOP) | 17,59 |
-| Kabel i sitni materijal | 6,00 |
+| HMI HMISTU855 | 1,575.37 |
+| PLC TM200CE24T | 604.55 |
+| Drive ATV12H055M2 | 460.30 |
+| Contactor CA3SK20BD | 70.31 |
+| Thermal relay RSL1PRBU | 48.88 |
+| RCD 300 mA | 41.10 |
+| Harmony XB5 (E-STOP) | 17.59 |
+| Cable and sundries | 6.00 |
 
-### PLC dio — Machine Expert Basic
+### PLC side — Machine Expert Basic
 
-Komunikacija s invertorom ide kroz **ATV drive funkcionalne blokove** koji Modbus registre kriju iza API-ja s enable/execute handshake-om:
+Communication with the drive goes through the **ATV drive function blocks**, which hide the Modbus registers behind an API with an enable/execute handshake:
 
-| Blok | Zadatak |
+| Block | Task |
 | --- | --- |
-| `MC_Power_ATV` | uključivanje snage invertora (enable) |
-| `MC_Jog_ATV` | ručno pokretanje (jog) iz HMI-ja |
-| `MC_MoveVel_ATV` | kretanje na zadanu brzinu (glavna komanda) |
-| `MC_Stop_ATV` | kontrolirano zaustavljanje (rampa) |
-| `MC_ReadStatus_ATV` | bitovi statusa (got, error, busy) |
-| `MC_ReadMotionState_ATV` | stanje drive-a za HMI indikatore |
-| `MC_Reset_ATV` | reset greške invertora |
+| `MC_Power_ATV` | enabling drive power |
+| `MC_Jog_ATV` | manual jogging from the HMI |
+| `MC_MoveVel_ATV` | motion at the commanded velocity (main command) |
+| `MC_Stop_ATV` | controlled stop (ramp) |
+| `MC_ReadStatus_ATV` | status bits (got, error, busy) |
+| `MC_ReadMotionState_ATV` | drive state for the HMI indicators |
+| `MC_Reset_ATV` | reset a drive fault |
 
 ```iecst
-(* Glavna komanda: zadana brzina iz HMI-ja, smjer se bira flagom *)
+(* Main command: speed reference from the HMI, direction selected by a flag *)
 MC_MoveVel_ATV(
     Axis       := ATV12,
     Execute    := hmi_Start AND NOT hmi_Stop AND NOT estop,
-    Velocity   := hmi_ZadanaBrzina,          (* rpm, ograničeno na HMI strani *)
+    Velocity   := hmi_ZadanaBrzina,          (* rpm, limited on the HMI side *)
     Direction  := hmi_SmjerCW,               (* TRUE = CW, FALSE = CCW *)
     Profile    := ATVFwd_Vel
 );
 
-(* Povratna informacija za HMI i sigurnosni lanac *)
+(* Feedback for the HMI and the safety circuit *)
 MC_ReadStatus_ATV(Axis := ATV12, Enable := TRUE);
 hmi_Rad := MC_ReadStatus_ATV.IsMoving;
 hmi_Greska := MC_ReadStatus_ATV.Error;
@@ -88,137 +91,147 @@ hmi_Greska := MC_ReadStatus_ATV.Error;
 
 ### HMI — Vijeo Designer
 
-| Ekran | Sadržaj |
+| Screen | Contents |
 | --- | --- |
-| **Glavni ekran** | zadana i trenutna brzina, START/STOP, izbor smjera CW/CCW, trend brzine |
-| **500 RPM / 1500 RPM** | direktni presetovi brzine (jedan dodir) |
-| **Promjena smjera** | CW/CCW uz prikaz trenutne brzine i vremena rada |
-| **Login / Logout** | prijava, automatski logout poslije **1 min** neaktivnosti |
-| **Historija događaja** | *Alarms & Events* log (Inspector i Admin mogu pregledati) |
-| **Postavke** | Admin: jezik, zabrana promjene smjera, dodavanje korisnika |
-| **Sigurnosne postavke** | E-STOP status i limit brzine |
-| **Višejezičnost** | EN / BS, prebacivanje u runtimeu |
+| **Main screen** | commanded and actual speed, START/STOP, CW/CCW direction selection, speed trend |
+| **500 RPM / 1500 RPM** | direct speed presets (one touch) |
+| **Direction change** | CW/CCW with the current speed and running time displayed |
+| **Login / Logout** | sign-in, automatic logout after **1 min** of inactivity |
+| **Event history** | *Alarms & Events* log (viewable by Inspector and Admin) |
+| **Settings** | Admin: language, disabling direction change, adding users |
+| **Safety settings** | E-STOP status and speed limit |
+| **Multilingual** | EN / BS, switched at runtime |
 
-![Glavni HMI ekran](../images/ia/hmi-glavni_ekran.png)
-*Glavni ekran: zadana vs. trenutna brzina, START/STOP i izbor smjera.*
+<div class="gallery" markdown="1">
 
-![Brzina 500 o/min](../images/ia/hmi-500_rpm.png)
-![Brzina 1500 o/min](../images/ia/hmi-1500_rpm.png)
-![Promjena smjera](../images/ia/hmi-promjena_smjera.png)
+![Main HMI screen](../images/ia/hmi-glavni_ekran.png)
 
-![Login ekran](../images/ia/hmi-login.png)
-![Historija događaja](../images/ia/hmi-historija.png)
+![Speed 500 rpm](../images/ia/hmi-500_rpm.png)
 
-![Postavke](../images/ia/hmi-postavke.png)
-![Sigurnosne postavke](../images/ia/hmi-sigurnosne_postavke.png)
+![Speed 1500 rpm](../images/ia/hmi-1500_rpm.png)
 
-![Hitni stop](../images/ia/hmi-hitan_stop.png)
-![Višejezičnost EN/BS](../images/ia/hmi-visejezicnost.png)
+![Direction change](../images/ia/hmi-promjena_smjera.png)
 
-![Asinhroni motor u postrojenju](../images/ia/asinhroni-motor.jpg)
-*Asinhroni motor pogonjen preko ATV12 invertora (fizički dio postrojenja).*
+![Login screen](../images/ia/hmi-login.png)
 
-#### Hijerarhija prava pristupa
+![Event history](../images/ia/hmi-historija.png)
 
-| Grupa | Pokretanje | Promjena brzine | Promjena smjera | Postavke / korisnici | Historija |
+![Settings](../images/ia/hmi-postavke.png)
+
+![Safety settings](../images/ia/hmi-sigurnosne_postavke.png)
+
+![Emergency stop](../images/ia/hmi-hitan_stop.png)
+
+![Multilingual EN/BS](../images/ia/hmi-visejezicnost.png)
+
+</div>
+
+*Ten HMI screens: the main screen shows commanded vs. actual speed with START/STOP and direction selection; the remaining screens cover the speed presets, direction change, login, event log, settings, safety settings, emergency stop and runtime language switching.*
+
+![Induction motor in the plant](../images/ia/asinhroni-motor.jpg)
+*Induction motor driven through the ATV12 (the physical part of the plant).*
+
+#### Access-rights hierarchy
+
+| Group | Start | Change speed | Change direction | Settings / users | History |
 | --- | :-: | :-: | :-: | :-: | :-: |
-| **Neprijavljeni** | ✔ | ✘ | ✘ | ✘ | ✘ |
+| **Not signed in** | ✔ | ✘ | ✘ | ✘ | ✘ |
 | **Crew** | ✔ | ✔ | ✘ | ✘ | ✘ |
 | **Inspector** | ✔ | ✔ | ✔ | ✘ | ✔ |
 | **Admin** | ✔ | ✔ | ✔ | ✔ | ✔ |
 
-Dizajn je verbalno obrazložen pozivanjem na **NUREG-0700** (kontrolna soba) i **Rockwell Automation Guide to Effective Machine Control**, uz samokritiku: *taster STOP je ostao stalno crven i kad je mašina zaustavljena, što je u suprotnosti s preporukom da boja odražava trenutno stanje.*
+The design was justified verbally by referencing **NUREG-0700** (control room) and the **Rockwell Automation Guide to Effective Machine Control**, together with self-criticism: *the STOP button stayed permanently red even when the machine was stopped, which contradicts the recommendation that colour should reflect the current state.*
 
-### Moj doprinos (17 h, prema dnevniku)
+### My contribution (17 h, from the activity log)
 
-| Aktivnost | Sati |
+| Activity | Hours |
 | --- | :-: |
-| Upoznavanje s Modbus protokolom i registrima ATV12 | 4 |
-| Konfiguracija invertora i PLC ↔ ATV12 komunikacija | 4 |
-| Rekonfiguracija nakon prvog neuspješnog testa | 3 |
-| Test prve verzije programa | 3 |
-| Test finalne verzije | 2 |
-| Crtanje principijelne sheme | 1 |
+| Learning the Modbus protocol and ATV12 registers | 4 |
+| Drive configuration and PLC ↔ ATV12 communication | 4 |
+| Reconfiguration after the first failed test | 3 |
+| Testing the first version of the program | 3 |
+| Testing the final version | 2 |
+| Drawing the wiring diagram | 1 |
 
-### Šta sam naučio
+### What I learned
 
-- Modbus registre nije dovoljno pročitati — **redoslijed bitova i refresh ciklus** drive bloka odlučuju hoće li komanda uopšte prošati.
-- Prva konfiguracija **nije radila**; tek je rekonfiguracija (adresa, baud, timeout) riješila problem — dijagnostika serijskog linka je skuplja od samog programiranja.
-- HMI bez hijerarhije prava pristupa nije industrijsko rješenje, nego demo.
+- Reading the Modbus registers is not enough — the **bit order and the refresh cycle** of the drive block decide whether a command works at all.
+- The first configuration **did not work**; only reconfiguring (address, baud, timeout) solved it — serial-link diagnostics cost more time than the programming itself.
+- An HMI without an access-rights hierarchy is not an industrial solution, it is a demo.
 
 ---
 
-## Dvopoložajna regulacija temperature na programabilnom releju (Eaton easy512)
+## Two-position temperature control on a programmable relay (Eaton easy512)
 
-**Predmet:** Principi automatizacije i upravljanja (PAPU) · zadatak 2 · 2026.
+**Course:** Principles of Automation and Control (PAPU) · assignment 2 · 2026.
 
-!!! abstract "U jednoj rečenici"
-    Temperaturna komora (220 V sijalica kao grijač, NTC senzor) regulisana je **on/off algoritmom s histerezom** na **Eaton easy512-DC-RC** releju — prvo identifikacijom termičkog sistema izmjerenim odzivom, pa projektovanjem komparatora u **EASY-SOFT ljestvičastom jeziku** i verifikacijom u **Simulink** modelu.
+!!! abstract "In one sentence"
+    A temperature chamber (220 V lamp as heater, NTC sensor) was controlled by a **two-position on/off algorithm with hysteresis** on an **Eaton easy512-DC-RC** relay — first by identifying the thermal system from measured response, then by designing the comparator in **EASY-SOFT ladder logic** and verifying it in a **Simulink** model.
 
 ### Setup
 
-| Dio | Realizacija |
+| Part | Implementation |
 | --- | --- |
-| Upravljački uređaj | **Eaton easy512-DC-RC**, 24 V DC, EASY-SOFT |
-| Ulazni signal | **NTC 10 kΩ @ 20 °C** (540 Ω @ 120 °C) na analognom ulazu **I7** |
-| Izlazni aktuator | **Q1** → relej → **220 V sijalica** (grijač) |
-| Analogni preduslov | most sa napajanjem **10 V**, 12-bitni ADC MCC kartice |
-| Ciljna temperatura | **46 ± 1,5 °C**, u praksi pomjerena na **48,5 ± 2,5 °C** radi linearnijeg dijela NTC karakteristike |
+| Controller | **Eaton easy512-DC-RC**, 24 V DC, EASY-SOFT |
+| Input signal | **NTC 10 kΩ @ 20 °C** (540 Ω @ 120 °C) on analogue input **I7** |
+| Output actuator | **Q1** → relay → **220 V lamp** (heater) |
+| Analogue front end | bridge with a **10 V** supply, 12-bit ADC of the MCC card |
+| Target temperature | **46 ± 1.5 °C**, in practice shifted to **48.5 ± 2.5 °C** to use the more linear part of the NTC curve |
 
-![Spajanje na easy512 relej](../images/regulacija/plc-spajanje.png)
-*Realizacija spoja na easy512-DC-RC: analogni ulaz I7 (NTC) i izlaz Q1 na 220 V grijač.*
+![Wiring to the easy512 relay](../images/regulacija/plc-spajanje.png)
+*Actual wiring on the easy512-DC-RC: analogue input I7 (NTC) and output Q1 to the 220 V heater.*
 
-![NTC mjerno kolo](../images/regulacija/ntc-kolo.png)
-*Naponski razdjelnik s NTC-om na napajanju 10 V — izlaz ide na 12-bitni ADC.*
+![NTC measurement circuit](../images/regulacija/ntc-kolo.png)
+*Voltage divider with the NTC on a 10 V supply — the output goes to the 12-bit ADC.*
 
-Otpor NTC-a se iz izmjerenog izlaznog napona računa kao
+The NTC resistance is calculated from the measured output voltage as
 
 $$
-R_n=\frac{1{,}64}{10-V_{izl}}\cdot V_{izl},\qquad
-T={76{,}716\,e^{-1{,}6759\,R_n}}+{79{,}481\,e^{-0{,}194\,R_n}}
+R_n=\frac{1.64}{10-V_{out}}\cdot V_{out},\qquad
+T={76.716\,e^{-1.6759\,R_n}}+{79.481\,e^{-0.194\,R_n}}
 $$
 
-### Identifikacija sistema izmjerenim odzivom
+### System identification from measured response
 
-Na osnovu step-odziva grijanja i hlađenja modelovan je sistem **prvog reda sa kašnjenjem** u oba smjera:
+From the step response of heating and cooling, a **first-order system with dead time** was modelled in both directions:
 
-| Režim | Vremenska konstanta τ | Pojačanje K |
+| Mode | Time constant τ | Gain K |
 | --- | --- | --- |
-| Grijanje (Q1 = 1) | **115,2089 s** | **+0,2786** |
-| Hlađenje (Q1 = 0) | **151,3189 s** | **−0,2542** |
+| Heating (Q1 = 1) | **115.2089 s** | **+0.2786** |
+| Cooling (Q1 = 0) | **151.3189 s** | **−0.2542** |
 
-![Blokovska struktura simulacije](../images/regulacija/blokovska-struktura.png)
+![Block structure of the simulation](../images/regulacija/blokovska-struktura.png)
 
-### Implementacija u EASY-SOFT
+### Implementation in EASY-SOFT
 
-Regulator je ispisan **ljestvičastim programom** u EASY-SOFT okruženju: usporedba izmjerene temperature s gornjom i donjom granicom histereze (analogni komparator) direktno upravlja izlazom Q1.
+The controller is written as a **ladder program** in the EASY-SOFT environment: comparing the measured temperature against the upper and lower hysteresis limits (analogue comparator) drives output Q1 directly.
 
-![Ljestvičasti program regulatora](../images/regulacija/ladder.png)
+![Ladder program of the controller](../images/regulacija/ladder.png)
 
-![Parametri analognog komparatora](../images/regulacija/komparator.png)
-*Postavke komparatora — širina histerezisnog pojasa određuje broj preključenja.*
+![Analogue comparator parameters](../images/regulacija/komparator.png)
+*Comparator settings — the width of the hysteresis band determines the number of switchings.*
 
-U **Simulink** modelu sistem prvog reda je implementiran integratorom, a regulator klasičnim **Relay** blokom (histereza) — time je broj preključenja i amplituda oscilacije direktno mjerljiva:
+In the **Simulink** model the first-order system was implemented with an integrator and the controller with a classic **Relay** block (hysteresis), which makes the number of switchings and the oscillation amplitude directly measurable:
 
-![Simulink model i simulacija](../images/regulacija/simulink-model.png)
+![Simulink model and simulation](../images/regulacija/simulink-model.png)
 
-### Rezultat i trade-off
+### Result and trade-off
 
-Veća histereza → **manje preključivanja grijača** (duži vijek releja), ali **veće talasanje temperature**; manja histereza → preciznija temperatura uz brzo trošenje izlaznog releja. Izabrana je vrijednost pri kojoj je temperatura držana u traženom intervalu uz prihvatljiv broj ciklusa.
+Larger hysteresis → **fewer heater switchings** (longer relay life) but **larger temperature ripple**; smaller hysteresis → more accurate temperature but rapid wear of the output relay. The chosen value kept the temperature inside the required interval with an acceptable number of cycles.
 
-!!! warning "Uočena nekonzistentnost u radi"
-    Tekst izvještaja tvrdi da se sistem **hladi brže** nego što se grije, ali izmjerene konstante kažu suprotno: τ<sub>hladenja</sub> = 151,3 s > τ<sub>grijanja</sub> = 115,2 s. Ispravno tumačenje je da **grijanje dominira** (jači izvor od gubitaka), pa se sistem sporije hladi.
+!!! warning "Inconsistency found in the report"
+    The report text claims the system **cools faster** than it heats, but the measured constants say the opposite: τ<sub>cooling</sub> = 151.3 s > τ<sub>heating</sub> = 115.2 s. The correct interpretation is that **heating dominates** (a stronger source than the losses), so the system cools more slowly.
 
-### Materijali
+### Materials
 
-`Data/PAPU P2/` — EASY-SOFT projektat (ljestveni jezik), PDF izvještaj, Simulink model, `.lvm` snimci mjerenja.
+`Data/PAPU P2/` — EASY-SOFT project (ladder logic), PDF report, Simulink model, `.lvm` measurement recordings.
 
 ---
 
-## Dokumentacija i kod
+## Documentation and code
 
-| Artefakt | Lokacija |
+| Artefact | Location |
 | --- | --- |
-| IA seminarski rad (PDF), shema, HMI projektat | `Data/IA_Projekat_Krdzalic_Muratagic_Sabic/` |
-| PAPU zadatak 2 (EASY-SOFT, Simulink, izvještaj) | `Data/PAPU P2/` |
-| Dnevnik aktivnosti i predračun | priloženi u IA radu |
+| IA term paper (PDF), wiring diagram, HMI project | `Data/IA_Projekat_Krdzalic_Muratagic_Sabic/` |
+| PAPU assignment 2 (EASY-SOFT, Simulink, report) | `Data/PAPU P2/` |
+| Activity log and cost estimate | attached to the IA paper |

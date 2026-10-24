@@ -1,0 +1,62 @@
+/* Figure sizing.
+
+   Three rules, one goal: every picture on a page occupies a predictable box.
+
+   1. Standalone figures fill the text column. Without this, small images
+      (the 369 px component photos) render at native size next to diagrams
+      that span the full column.
+   2. .gallery groups images into equal-width tiles with one shared height,
+      so rows line up regardless of the source aspect ratios.
+   3. .gallery--natural drops the shared height for sources that cannot
+      tolerate cropping — see the note on that rule.
+*/
+
+.md-content__inner img {
+  width: 100%;
+  height: auto;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.6rem;
+  margin: 1em 0;
+}
+
+/* Markdown wraps each image in its own paragraph; drop the paragraph margins
+   so tiles align to the grid rows instead of being pushed apart by them. */
+.gallery > p {
+  margin: 0;
+}
+
+/* Source aspect ratios are ~1.66 for the PLC HMI screenshots this was built
+   for, so the tile matches them and object-fit neither crops nor letterboxes.
+   Plots and portraits use .gallery--natural below instead. */
+.gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 3;
+  object-fit: cover;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.1rem;
+}
+
+/* Square sources (component photos) get square tiles. */
+.gallery--square img {
+  aspect-ratio: 1 / 1;
+}
+
+/* MATLAB plots are 4:3, the Typhoon HIL SCADA panel is square and the battery
+   settings dialog is portrait. Cover-fitting those to 5/3 cuts off plot titles
+   and axis labels, so tiles in this variant keep the source aspect ratio and
+   line up by width only. */
+.gallery--natural img {
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+/* Tall sources at full column width push the following text off the screen. */
+.gallery--narrow {
+  max-width: 34rem;
+}

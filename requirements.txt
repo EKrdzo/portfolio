@@ -1,3 +1,3 @@
-# Verzije uskladjene s lokalnim .venv (osvjezi: uv pip install -U mkdocs mkdocs-material)
+# Versions matched to the local .venv (refresh with: uv pip install -U mkdocs mkdocs-material)
 mkdocs==1.6.1
 mkdocs-material==9.7.7

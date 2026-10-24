@@ -1,11 +1,11 @@
-# Portfolio — BSc inženjerski projekti
+# Portfolio — BSc engineering projects
 
-Lični tehnički portfolio izrađen uz **MkDocs** i temu **Material for MkDocs**.
-Sadržaj je pisan iz stvarnih projektnih zadataka i seminarskih radova s
-Elektrotehničkog fakulteta u Sarajevu (real-time simulacija energetskih sistema,
-industrijska automatizacija, obrada signala, ugrađeni sistemi/FPGA, mehatronika).
+Personal technical portfolio built with **MkDocs** and the **Material for MkDocs** theme.
+The content is based on real project assignments and term papers from the
+Faculty of Electrical Engineering in Sarajevo (real-time power system simulation,
+industrial automation, signal processing, embedded systems/FPGA, mechatronics).
 
-## Pokretanje lokalno
+## Running locally
 
 ```bash
 uv venv --python 3.11
@@ -13,19 +13,20 @@ uv pip install mkdocs mkdocs-material
 mkdocs serve            # http://127.0.0.1:8000
 ```
 
-## Struktura
+## Structure
 
 ```
-mkdocs.yml                  konfiguracija teme, ekstenzija i navigacije
-docs/index.md               početna strana i pregled projekata
-docs/kontakt.md             kontakt, obrazovanje, vještine
-docs/projekti/*.md          stranice projekata
-docs/images/<projekat>/     figure (sheme, HMI ekrani, fotografije)
-docs/javascripts/mathjax.js MathJax pokretanje za pymdownx.arithmatex
+mkdocs.yml                  theme, extension and navigation configuration
+docs/index.md               home page and project overview
+docs/kontakt.md             contact, education, skills
+docs/projekti/*.md          project pages
+docs/images/<project>/      figures (diagrams, HMI screens, photographs)
+docs/stylesheets/extra.css  uniform figure sizes and image galleries
+docs/javascripts/mathjax.js MathJax bootstrap for pymdownx.arithmatex
 ```
 
-## Izgradnja
+## Building
 
 ```bash
-mkdocs build --strict       # staje na prekinute linkove i nedostajuće slike
+mkdocs build --strict       # fails on broken links and missing images
 ```

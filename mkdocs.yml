@@ -1,6 +1,6 @@
-site_name: Portfolio | BSc Inženjerski Projekti
-site_description: Pregled tehničkih i inženjerskih projekata sa Bachelor studija.
-site_author: Emir
+site_name: Portfolio | BSc Engineering Projects
+site_description: Overview of technical and engineering projects from Bachelor studies.
+site_author: Emir Krdžalić
 site_url: https://ekrdzo.github.io/portfolio/
 
 theme:
@@ -10,12 +10,12 @@ theme:
       scheme: default
       toggle:
         icon: material/brightness-7
-        name: Preklopi na tamni režim
+        name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
         icon: material/brightness-4
-        name: Preklopi na svijetli režim
+        name: Switch to light mode
   features:
     - navigation.tabs
     - navigation.sections
@@ -35,15 +35,18 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
+extra_css:
+  - stylesheets/extra.css
+
 extra_javascript:
   - javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
-  - Početna: index.md
-  - Mikroreže & BESS: projekti/microgrids.md
-  - PLC & Automatizacija: projekti/plc-automation.md
-  - Obrada Signala & Simulacije: projekti/obrada-signala.md
-  - Ugrađeni Sistemi & FPGA: projekti/embedded-fpga.md
-  - Mehatronika & Robotika: projekti/mehatronika.md
-  - Kontakt & CV: kontakt.md
+  - Home: index.md
+  - Microgrids & BESS: projekti/microgrids.md
+  - PLC & Automation: projekti/plc-automation.md
+  - Signal Processing & Simulation: projekti/obrada-signala.md
+  - Embedded & FPGA: projekti/embedded-fpga.md
+  - Mechatronics & Robotics: projekti/mehatronika.md
+  - Contact & CV: kontakt.md

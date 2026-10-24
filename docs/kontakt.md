@@ -1,66 +1,60 @@
-# Kontakt & CV
+# Contact & CV
 
-## Kontakt
+## Contact
 
-!!! note "Popuni prije javnog objavljivanja"
-    Lični podaci nisu preuzeti iz projektnih materijala — unesi ih prije objave (npr. `mkdocs serve` pa uređuj `docs/kontakt.md`).
 
-| Podatak | Vrijednost |
+|  |  |
 | --- | --- |
-| Ime i prezime | Emir [prezime] |
-| Email | `[email@primjer.com]` |
-| Telefon | `[+387 xx xxx xxx]` |
-| Grad | Sarajevo, Bosna i Hercegovina |
-| LinkedIn | `[link ka profilu]` |
-| GitHub | `[link ka repozitorijima]` |
+| Name | Emir Krdžalić |
+| Email | `emir.krdzo@gmail.com` |
+| Phone | `+387 603170128`<br>`+420 703 817 100` |
+| Location | Brno, Czech Republic<br>Sarajevo, Bosnia and Herzegovina |
+| LinkedIn | `https://www.linkedin.com/in/emirkrdzalic/` |
+| GitHub | `https://github.com/EKrdzo` |
 
-## Obrazovanje
+## Education
 
-**Univerzitet u Sarajevu — Elektrotehnički fakultet**, Odsjek za automatiku i elektroniku
+### Brno University of Technology — Faculty of Electrical Engineering and Communication (FEKT VUT)
 
-- Prvi ciklus studija (BSc), završni rad odbranjen jula 2026.
-- **Završni rad:** *Modeliranje i simulacija sistema vođenja mikromreže u Typhoon HIL okruženju* — mentor: v. prof. dr Senad Huseinbegović
-- Rad na postrojenjima odsjeka: Typhoon HIL 402, MCC ME-RedLab 1208FS, Schneider TM200/ATV12/HMISTU855, Eaton easy512, NXP LPC1114, Gowin GW1N-1, Pixhawk 4
+* **Master of Science (MSc) in Bioengineering (MPA-BIO)** | *2026 – Present*
+* **Scholarship:** Awarded the Czech Government Scholarship (Dům zahraniční spolupráce / MŠMT) for Master's degree studies.
+* **Relevant Coursework:** Machine Learning, Multidimensional Data Analysis, Acquisition Systems, Cardiac Diagnostics.
 
-### Relevantni predmeti i projektni zadaci
+---
 
-| Predmet | Nastavnik / mentor | Projektni zadatak |
+### University of Sarajevo — Faculty of Electrical Engineering
+
+* **Bachelor of Science (BSc) in Automatic Control and Electronics** | *Defended July 2026*
+* **Thesis:** *Modelling and simulation of a microgrid energy-management system in the Typhoon HIL environment* — supervisor: Assoc. Prof. Senad Huseinbegović, PhD
+* **Departmental Equipment & Hardware:** Typhoon HIL 402, MCC ME-RedLab 1208FS, Schneider TM200/ATV12/HMISTU855, Eaton easy512, NXP LPC1114, Gowin GW1N-1, Pixhawk 4
+
+### Relevant courses and project assignments
+
+| Course | Lecturer / supervisor | Project assignment |
 | --- | --- | --- |
-| Praktikum automatike | S. Konjičija, S. Gajip, A. Fejzić | A/D konvertor u asembleru (LPC1114) |
-| Principi automatizacije i upravljanja | — | NTC linearnizacija, dvopoložajna regulacija temperature, PID DC motora |
-| Industrijska automatizacija | doc. dr Nedim Osmić | Postrojenje za regulaciju brzine asinhronog motora |
-| Energetski pretvarači | — | Boost pretvarač za punjenje 18650 paketa |
-| Programabilni logički sklopovi | — | Digitalno kolo na Gowin FPGA |
-| Mehatronika | red. prof. dr sc. Jasmin Velagić | Upravljanje dronom (Pixhawk 4 + Raspberry Pi) |
+| Control Systems Laboratory | S. Konjičija, S. Gajip, A. Fejzić | A/D converter in assembly language (LPC1114) |
+| Principles of Automation and Control | — | NTC linearisation, two-position temperature control, DC motor PID |
+| Industrial Automation | Assistant Professor Nedim Osmić, PhD | Speed-control plant for an induction motor |
+| Power Converters | — | Boost converter for charging an 18650 pack |
+| Programmable Logic Devices | — | Digital circuit on a Gowin FPGA |
+| Mechatronics | Full Professor Jasmin Velagić, PhD | Drone control (Pixhawk 4 + Raspberry Pi) |
 
-*Timovi u kojima je rad rađen: S. Muratagić, A. Šabić, A. Bajramović.*
+*Teams the work was done in: S. Muratagić, A. Šabić, A. Bajramović.*
 
-## Vještine
+## Skills
 
-**Energetika i real-time simulacija:** Typhoon HIL (HIL 402, Control Center, SCADA, ETH VE), BESS, mikroreže, energetski pretvarači (boost, state-space model)
+**Power systems and real-time simulation:** Typhoon HIL (HIL 402, Control Center, SCADA, ETH VE), BESS, microgrids, power converters (boost, state-space model)
 
-**Industrijska automatizacija:** Schneider Modicon M221 / **Machine Expert Basic**, **ATV** invertori (U/f), **Vijeo Designer** (HMI), Modbus, Eaton **EASY-SOFT** (ljestvičasti jezik), Structured Text po IEC 61131-3
+**Industrial automation:** Schneider Modicon M221 / **Machine Expert Basic**, **ATV** variable-frequency drives (U/f), **Vijeo Designer** (HMI), Modbus, Eaton **EASY-SOFT** (ladder diagram), Structured Text per IEC 61131-3
 
-**Modelovanje, obrada signala i regulacija:** **MATLAB / Simulink** (identifikacija sistema prvog reda, `pidtune`, `fminsearch`), **LabVIEW**, akvizicija preko MCC kartica, PID i on/off regulacija s histerezom
+**Modelling, signal processing and control:** **MATLAB / Simulink** (first-order system identification, `pidtune`, `fminsearch`), **LabVIEW**, acquisition via MCC cards, PID and on/off control with hysteresis
 
-**Ugrađeni sistemi i digitalne sklopke:** ARM **Cortex-M0** asembler (Thumb), direktno upravljanje registrima periferije, **SystemVerilog**, **Gowin EDA**, **Verilator** / GTKWave
+**Embedded systems and digital design:** ARM **Cortex-M0** assembly (Thumb), direct peripheral register manipulation, **SystemVerilog**, **Gowin EDA**, **Verilator** / GTKWave
 
-**Robotika:** **ROS Noetic**, **MAVROS**, MAVLink, Pixhawk, Ubuntu Server
+**Robotics:** **ROS Noetic**, **MAVROS**, MAVLink, Pixhawk, Ubuntu Server
 
-**Programiranje i alati:** **C**, Python, MATLAB, Verilog/SystemVerilog, Git, MkDocs/Material
+**Programming and tools:** **C**, Python, MATLAB, Verilog/SystemVerilog, Git, MkDocs/Material
 
-**Jezici:** bosanski — materinski, engleski — [nivo], njemački — [nivo]
+**Languages:** Bosnian — native, English — full working proficiency, German — full working proficiency, Czech - elementary proficiency.
 
-## CV / Životopis
 
-PDF životopisa spremi u `docs/` folder, pa ovdje ostavi link:
-
-```markdown
-[Preuzmi CV (PDF)](CV_Emir.pdf)
-```
-
-## Reference i dokumenti
-
-- Dodaj `docs/CV_Emir.pdf` i ažuriraj gornji link.
-- Završni rad i projektni izvještaji dostupni su lokalno u `Data/` — PDF-ovi se mogu priložiti uz saglasnost mentora.
-- Provjeri da li su linkovi ka repozitorijima javni.

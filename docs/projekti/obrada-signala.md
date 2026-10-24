@@ -1,118 +1,118 @@
-# Obrada Signala & Simulacije
+# Signal Processing & Simulation
 
-Mjerenje, linearnizacija senzorskih signala, identifikacija sistema i PID regulacija — od laboratorije (**MCC** kartica, **LabVIEW**, **MATLAB/Simulink**) do eksperimentalne verifikacije.
+Measurement, linearisation of sensor signals, system identification and PID control — from the laboratory (**MCC** card, **LabVIEW**, **MATLAB/Simulink**) to experimental verification.
 
 ---
 
-## PID regulacija brzine DC motora
+## PID speed control of a DC motor
 
-**Predmet:** Principi automatizacije i upravljanja (PAPU) · projektni zadatak 3 · 2026.
+**Course:** Principles of Automation and Control (PAPU) · project assignment 3 · 2026.
 
-!!! abstract "U jednoj rečenici"
-    Brzina DC motora mjerena **tahogeneratorom** preko **MCC ME-RedLab 1208FS** kartice regulisana je PID-om čiji su parametri dobiveni u **MATLAB PID Tuner**-u na osnovu identifikovanih prenosnih funkcija, a zatim implementirani u **Simulink** i na stvarnom postrojenju — uključujući **anti-windup** i zaštitu od šuma u povratnoj spregi.
+!!! abstract "In one sentence"
+    The speed of a DC motor, measured with a **tachogenerator** through an **MCC ME-RedLab 1208FS** card, was controlled by a PID whose parameters were obtained in the **MATLAB PID Tuner** from identified transfer functions, then implemented in **Simulink** and on the actual plant — including **anti-windup** and protection against noise in the feedback path.
 
-### Mjereni sistem
+### Measured system
 
-| Element | Realizacija |
+| Element | Implementation |
 | --- | --- |
-| Aktuator | DC motor **12 V**, upravljački signal **0–10 V** |
-| Mjerenje | **tahogenerator** (napon proporcionalan obrtajima) |
-| I/O | **MCC ME-RedLab 1208FS**, 12-bitni ADC/DAC |
-| Softver | MATLAB (identifikacija, `pidtune`) + Simulink + eksperiment |
+| Actuator | DC motor **12 V**, control signal **0–10 V** |
+| Measurement | **tachogenerator** (voltage proportional to speed) |
+| I/O | **MCC ME-RedLab 1208FS**, 12-bit ADC/DAC |
+| Software | MATLAB (identification, `pidtune`) + Simulink + experiment |
 
-![Blok-dijagram sistema](../images/pidu/blok-dijagram.png)
+![System block diagram](../images/pidu/blok-dijagram.png)
 
-![Shema spajanja](../images/pidu/shema-spajanja.png)
+![Wiring diagram](../images/pidu/shema-spajanja.png)
 
-### Identifikacija
+### Identification
 
-Identifikovane su **dvije odvojene** prenosne funkcije — motor se ponaša drugačije pri ubrzanju nego pri zaustavljanju (trenje i asimetrija gubitaka):
+**Two separate** transfer functions were identified — the motor behaves differently while accelerating than while stopping (friction and loss asymmetry):
 
 $$
-G_{\text{vrti}}(s)=\frac{27{,}2541}{0{,}24\,s+1},\qquad
-G_{\text{zaustavljanje}}(s)=\frac{26{,}964}{0{,}133\,s+1}
+G_{\text{accel}}(s)=\frac{27.2541}{0.24\,s+1},\qquad
+G_{\text{stop}}(s)=\frac{26.964}{0.133\,s+1}
 $$
 
-### Parametri regulatora
+### Controller parameters
 
-PID je namešten u **PID Tuner**-u s prioritetom na **prvi preskok** odziva (maksimalno preblažavanje bez predugog vezivanja):
+The PID was tuned in the **PID Tuner** with priority on the **first overshoot** of the response (maximum damping without an unreasonably slow response):
 
-| Varijanta | K<sub>p</sub> | K<sub>i</sub> | K<sub>d</sub> |
+| Variant | K<sub>p</sub> | K<sub>i</sub> | K<sub>d</sub> |
 | --- | --- | --- | --- |
-| **PID Tuner (usvojena)** | **0,86253** | **6,8589** | **0,00074421** |
-| Eksperimentalna 1 | 1,2938 | 27,4356 | — |
-| Eksperimentalna 2 | 2,5876 | 5,007 | — |
+| **PID Tuner (adopted)** | **0.86253** | **6.8589** | **0.00074421** |
+| Experimental 1 | 1.2938 | 27.4356 | — |
+| Experimental 2 | 2.5876 | 5.007 | — |
 
-U Simulink modelu dodani su:
+The Simulink model adds:
 
-- **saturacija + anti-windup** na izlazu regulatora (inače integral „nabubri" dok motor ne može dalje);
-- **Switch + Derivative** grana koja razdvaja odziv po smjeru obrtanja (zbog različitih τ za vrti/zaustavljanje);
-- filter za **šum tahogeneratora** u povratnoj spregi (D-član ga direktno pojačava).
+- **saturation + anti-windup** at the controller output (otherwise the integral "bloats" while the motor cannot accelerate further);
+- a **Switch + Derivative** branch that separates the response by direction of rotation (because of the different τ for acceleration/stopping);
+- a filter for **tachogenerator noise** in the feedback path (the D term amplifies it directly).
 
 ![Simulink model](../images/pidu/simulink.png)
 
-### Rezultat: simulacija vs. eksperiment
+### Result: simulation vs. experiment
 
-![Eksperiment i simulacija](../images/pidu/eksperiment-vs-simulacija.png)
-*Usporedba odziva simuliranog modela i stvarnog postrojenja.*
+![Experiment and simulation](../images/pidu/eksperiment-vs-simulacija.png)
+*Comparison of the simulated model response and the actual plant.*
 
-!!! warning "Šta model ne pokriva"
-    Pri **nižim obrtajima** javljaju se oscilacije i **mrtva zona** uslijed trenja — linearni model prvog reda to ne opisuje. Zato je eksperimentalni odziv sporiji i „nazubljeniji" od simuliranog; za puno korektnije vođenje potreban je model s kompensacijom trenja (ili dvostepeni regulator).
+!!! warning "What the model does not cover"
+    At **lower speeds** oscillations and a **dead zone** appear because of friction — a linear first-order model does not describe that. The experimental response is therefore slower and more "jagged" than the simulated one; a considerably more correct control would need a model with friction compensation (or a two-stage controller).
 
 ---
 
-## Linearnizacija NTC termistora i obrada signala u LabVIEW-u
+## NTC thermistor linearisation and signal processing in LabVIEW
 
-**Predmet:** Principi automatizacije i upravljanja (PAPU) · zadatak 1 · 2026.
+**Course:** Principles of Automation and Control (PAPU) · assignment 1 · 2026.
 
 ### Problem
 
-NTC termistor ima **eksponencijalnu** R(T) karakteristiku, pa napon na njemu nije proporcionalan temperaturi. Traži se otpornik **R1** u naponskom razdjelniku koji karakteristiku čini **najlinearnijom** u radnom opsegu.
+An NTC thermistor has an **exponential** R(T) characteristic, so the voltage across it is not proportional to temperature. The task is to find the resistor **R1** in a voltage divider that makes the characteristic **as linear as possible** over the working range.
 
-### Metod
+### Method
 
-1. Mjerenje otpora u uzlaznom i silaznom smjeru temperaturnog opsega **31 – 142 °C** (histereza mjerenja je zabilježena).
-2. Model napona na NTC-u: \(V_{\text{NTC}} = V\cdot R/(R+R_1)\).
-3. Linearna aproksimacija (metoda najmanjih kvadrata) i **optimizacija R1 minimizacijom zbira kvadrata grešaka** u MATLAB-u:
+1. Resistance measured in the upsweep and downsweep of the temperature range **31 – 142 °C** (measurement hysteresis was recorded).
+2. Model of the voltage across the NTC: \(V_{\text{NTC}} = V\cdot R/(R+R_1)\).
+3. Linear approximation (least squares) and **optimisation of R1 by minimising the sum of squared errors** in MATLAB:
 
 ```matlab
 V  = 10;  R1 = 1.19e3;
 vNTC = V .* R ./ (R + R1);
-lin  = -0.0579 .* T + 7.2807;          % linearna aproksimacija
+lin  = -0.0579 .* T + 7.2807;          % linear approximation
 sse  = @(R1) sum( (V.*R./(R+R1) - lin).^2 );
-R1opt = fminsearch(sse, 1e3);          % → 1,19 kΩ
+R1opt = fminsearch(sse, 1e3);          % → 1.19 kΩ
 ```
 
-Rezultat je linearna veza **V<sub>linear</sub> = −0,0959·T + 14,0389** (drugi set mjerenja: y = −0,0579·T + 7,2807 pri R1 = 1,19 kΩ i napajanju 10 V), a odstupanje od prave se kvantifikuje u tabelama i grafički.
+The result is the linear relation **V<sub>linear</sub> = −0.0959·T + 14.0389** (second measurement set: y = −0.0579·T + 7.2807 with R1 = 1.19 kΩ and a 10 V supply), and the deviation from the true curve is quantified in tables and graphically.
 
-![Linearnizacija NTC karakteristike](../images/ncg/linearnaizacija.png)
+![Linearisation of the NTC characteristic](../images/ncg/linearnaizacija.png)
 
-![Karakteristika NTC senzora](../images/ncg/karakteristika.png)
+![NTC sensor characteristic](../images/ncg/karakteristika.png)
 
-### LabVIEW implementacija
+### LabVIEW implementation
 
-Obrada signala i automatsko snimanje serija podataka rađeni su u **LabVIEW**-u (projektat `LV5.lvproj`):
+Signal processing and automatic logging of data series were done in **LabVIEW** (project `LV5.lvproj`):
 
-| Datoteka | Uloga |
+| File | Role |
 | --- | --- |
-| `InputLV5.vi` | čitanje analognog ulaza sa MCC kartice |
-| `Zad4.vi` | glavni VI: konverzija napona → temperatura, prikaz, grananje |
-| `pomocni.vi` | pomoćna kalkulacija (R↔T, linearna aproksimacija) |
-| `*.lvm` | snimljene serije mjerenja (ulaz za MATLAB obradu) |
+| `InputLV5.vi` | reading the analogue input from the MCC card |
+| `Zad4.vi` | main VI: voltage → temperature conversion, display, branching |
+| `pomocni.vi` | auxiliary calculation (R↔T, linear approximation) |
+| `*.lvm` | recorded measurement series (input for MATLAB processing) |
 
-![MCC ME-RedLab 1208FS mjerna kartica](../images/ncg/mcc-kartica.jpg)
+![MCC ME-RedLab 1208FS measurement card](../images/ncg/mcc-kartica.jpg)
 
-### Šta sam naučio
+### What I learned
 
-- Linearnizacija je **kompromis opsega i tačnosti** — bolji R1 za sredinu opsega zna lošiju tačnost na krajevima.
-- Uzlazni i silazni podaci se ne poklapaju (termička konstanta termistora), pa se linearnizacija mora raditi na jednom smjeru ili na proseku.
-- LabVIEW za akviziciju + MATLAB za obradu je i dalje najbrži put od senzora do rezultata.
+- Linearisation is a **compromise between range and accuracy** — a better R1 for the middle of the range means worse accuracy at the ends.
+- The upsweep and downsweep data do not coincide (thermistor time constant), so the linearisation has to be done on one direction or on the average.
+- LabVIEW for acquisition + MATLAB for processing is still the fastest route from sensor to result.
 
 ---
 
-## Dokumentacija i kod
+## Documentation and code
 
-| Artefakt | Lokacija |
+| Artefact | Location |
 | --- | --- |
-| PAPU zadatak 1 (`lin.m`, `LV5.lvproj`, `.lvm` mjerenja, PDF) | `Data/PAPU p1/` |
-| PAPU zadatak 3 (Simulink model, PID parametri, PDF) | `Data/PAPU_Projekat3/` |
+| PAPU assignment 1 (`lin.m`, `LV5.lvproj`, `.lvm` measurements, PDF) | `Data/PAPU p1/` |
+| PAPU assignment 3 (Simulink model, PID parameters, PDF) | `Data/PAPU_Projekat3/` |

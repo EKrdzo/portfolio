@@ -1,43 +1,43 @@
-# Ugrađeni Sistemi & FPGA
+# Embedded & FPGA
 
-Rad direktno s registrima mikrokontrolera (**ARM Cortex-M0 u asembleru**) i sinteza digitalnog kola na **FPGA** (SystemVerilog → Gowin).
+Working directly with microcontroller registers (**ARM Cortex-M0 in assembly**) and synthesising a digital circuit on an **FPGA** (SystemVerilog → Gowin).
 
 ---
 
-## A/D konvertor u asembleru — NXP LPC1114FN28
+## A/D converter in assembly language — NXP LPC1114FN28
 
-**Predmet:** Praktikum automatike (ETFAEIPA3545) · nastavnici: Samim Konjičija, Selmir Gajip, Ajdin Fejzić · januar 2026.
+**Course:** Control Systems Laboratory (ETFAEIPA3545) · lecturers: Samim Konjičija, Selmir Gajip, Ajdin Fejzić · January 2026.
 
-!!! abstract "U jednoj rečenici"
-    Na **LPC1114FN28** (ARM **Cortex-M0**, Thumb skup instrukcija) napisan je program u **asembleru** koji očitava potenciometar preko **10-bitnog ADC-a** i vrijednost prikazuje na **multipleksanom sedmosegmentnom displeju** — bez ijedne biblioteke i operativnog sistema, samo direktno upravljanje registrima periferije.
+!!! abstract "In one sentence"
+    A program in **assembly language** was written for the **LPC1114FN28** (ARM **Cortex-M0**, Thumb instruction set) that reads a potentiometer through the **10-bit ADC** and displays the value on a **multiplexed seven-segment display** — without a single library or operating system, just direct manipulation of the peripheral registers.
 
-### Zadatak
+### Assignment
 
-| Dio | Realizacija |
+| Part | Implementation |
 | --- | --- |
-| Ulazni signal | potenciometar na **P0.11 / AD0** (analogni napon) |
-| Izlaz | **4× sedmosegmentni displej**, multipleksan |
-| Anode | **P1.4, P1.5, P1.9, P1.7** (aktivne **LOW**) |
-| Segmenti (a–g) | **P0.1, P0.2, P0.3, P0.6, P0.7, P0.8, P0.9** |
-| Mikrokontroler | NXP **LPC1114FN28**, Cortex-M0, Thumb ISA |
+| Input signal | potentiometer on **P0.11 / AD0** (analogue voltage) |
+| Output | **4× seven-segment display**, multiplexed |
+| Anodes | **P1.4, P1.5, P1.9, P1.7** (**LOW**-active) |
+| Segments (a–g) | **P0.1, P0.2, P0.3, P0.6, P0.7, P0.8, P0.9** |
+| Microcontroller | NXP **LPC1114FN28**, Cortex-M0, Thumb ISA |
 
-### Registeri koje je bilo potrebno podesiti
+### Registers that had to be configured
 
-Redoslijed je bitan — ADC se ne može uključiti dok se ne pusti njegov sat i dok se ne izbaci iz power-down moda:
+The order matters — the ADC cannot be enabled before its clock is released and it is taken out of power-down mode:
 
-| Registar | Vrijednost / bit | Značenje |
+| Register | Value / bit | Meaning |
 | --- | --- | --- |
 | `SYSAHBCLKCFG` | `0x12040` | bit 6 → **GPIO** clock, bit 13 → **ADC** clock, bit 16 → **IOCON** clock |
-| `PDRUNCFG` | clear bit 4 | izbacuje **ADC iz power-down** moda |
-| `IOCON` | funkcija pina | P0.11 prebačen u **AD0** (analog), ostali u GPIO |
-| `GPIO DIR` | smjer | izlazi za segmente/anode kao output |
-| `ADC CR` / `DR` | — | start konverzije, čitanje 10-bitnog rezultata |
+| `PDRUNCFG` | clear bit 4 | takes the **ADC out of power-down** mode |
+| `IOCON` | pin function | P0.11 switched to **AD0** (analogue), the rest to GPIO |
+| `GPIO DIR` | direction | segment/anode outputs set as outputs |
+| `ADC CR` / `DR` | — | start conversion, read the 10-bit result |
 
-Vektorska tabela smještena je na **`0x10001000`** (bootloader preslikava flash na tu adresu), pa program počinje tabelom sa stogom i reset vektorom:
+The vector table is placed at **`0x10001000`** (the bootloader remaps flash to that address), so the program starts with the table holding the stack pointer and reset vector:
 
 ```asm
                 .area VECTOR
-                .word   0x10000400          @ početni StackTop
+                .word   0x10000400          @ initial StackTop
                 .word   Reset_Handler       @ Reset
                 .word   Default_Handler     @ NMI
                 ...
@@ -51,38 +51,38 @@ Reset_Handler:
                 STR     R1, [R0]
 ```
 
-### Tok programa
+### Program flow
 
-1. Uključiti satove periferije i izbaciti ADC iz power-downa.
-2. Podesiti `IOCON` (P0.11 → AD0) i `GPIO DIR` za segmente i anode.
-3. Pokrenuti konverziju, čekati bit **DONE**, očitati `ADC_DR`.
-4. Skalirati 10-bitnu vrijednost, rastaviti na cifre i **multipleksati displej** (brzo prebacivanje između anoda ≫ praga percepcije → sve četiri cifre djeluju staljno).
+1. Enable the peripheral clocks and take the ADC out of power-down.
+2. Configure `IOCON` (P0.11 → AD0) and `GPIO DIR` for the segments and anodes.
+3. Start the conversion, wait for the **DONE** bit, read `ADC_DR`.
+4. Scale the 10-bit value, split it into digits and **multiplex the display** (switching between anodes far above the perception threshold → all four digits appear steady).
 
-### Šta sam naučio
+### What I learned
 
-- Bez biblioteka se vidi šta instrukcija za instrukcijom radi: **clock gating i power-down su prvi uslov** bilo kakvog rada periferije.
-- Multipleksiranje displeja je klasičan problem **tajminga, ne logike** — presporo treperi, prebrzo se cifre „liju".
-- Thumb skup nema sve ARM instrukcije (npr. uslovni izvršavanja su ograničena), što se osjeti pri ručnom pisanju.
+- Without libraries you see what instruction after instruction actually does: **clock gating and power-down are the first precondition** for any peripheral to work.
+- Display multiplexing is a classic **timing problem, not a logic one** — too slow it flickers, too fast the digits bleed into each other.
+- The Thumb instruction set does not have all ARM instructions (conditional execution, for example, is limited), which you feel when writing by hand.
 
 ---
 
-## Digitalno kolo na FPGA — Gowin GW1N-1
+## Digital circuit on an FPGA — Gowin GW1N-1
 
-**Predmet:** Programabilni logički sklopovi (PLS) · 2026.
+**Course:** Programmable Logic Devices (PLS) · 2026.
 
-!!! abstract "U jednoj rečenici"
-    U **SystemVerilogu** projektovan je brojačko-kombinatorni sklop na **Gowin GW1N-LV1QN48C6/I5** FPGA: 25-bitni dijelilak takta generiše **1 Hz** referencu, dva **T flip-flopa** broje stanja 0–3, a kombinacija izlaza `Q1`/`Q0` preko kombinatorike daje signale `C0`–`C3` i izlaz `Z`.
+!!! abstract "In one sentence"
+    A counter-combinational circuit was designed in **SystemVerilog** for the **Gowin GW1N-LV1QN48C6/I5** FPGA: a 25-bit clock divider generates a **1 Hz** reference, two **T flip-flops** count states 0–3, and the combination of the `Q1`/`Q0` outputs through combinational logic produces the `C0`–`C3` signals and the `Z` output.
 
-### Dizajn
+### Design
 
 ```systemverilog
-// project_fpga.sv — dijelilak takta i T flip-flopovi
+// project_fpga.sv — clock divider and T flip-flops
 always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
         counter <= 27'd0;
         Q1 <= 1'b0; Q0 <= 1'b0;
     end else begin
-        if (counter == 27_000_000 - 1) begin      // ~1 Hz izlaz
+        if (counter == 27_000_000 - 1) begin      // ~1 Hz output
             counter <= 27'd0;
             Q0 <= ~Q0;                             // T flip-flop (T = 1)
             if (Q0) Q1 <= ~Q1;                     // T = Q0
@@ -96,45 +96,45 @@ assign C0 = ~Q1 & ~Q0;
 assign C1 = ~Q1 &  Q0;
 assign C2 =  Q1 & ~Q0;
 assign C3 =  Q1 &  Q0;
-assign Z  = ~U & Q0 & Q1;                          // izlaz uslovljen ulazom U
+assign Z  = ~U & Q0 & Q1;                          // output gated by input U
 ```
 
-Varijanta u `project.sv` koristi `cnt >= 25'd13_500_000` (ista namjena, drugačija frekvencija oscilatora pločice).
+The variant in `project.sv` uses `cnt >= 25'd13_500_000` (same purpose, different board oscillator frequency).
 
-### Sinteza i resursi (Gowin)
+### Synthesis and resources (Gowin)
 
-| Resurs | Korišteno |
+| Resource | Used |
 | --- | --- |
-| I/O portovi | **8** (3 × IBUF, 5 × OBUF) |
-| Registeri | **27** (DFFC) |
-| LUT-ovi | **57** (LUT2: 13, LUT3: 17, LUT4: 27) |
-| Logic elementi | **57 / 1152 (5 %)** |
+| I/O pins | **8** (3 × IBUF, 5 × OBUF) |
+| Registers | **27** (DFFC) |
+| LUTs | **57** (LUT2: 13, LUT3: 17, LUT4: 27) |
+| Logic elements | **57 / 1152 (5 %)** |
 
-Uređaj: **GW1N-LV1QN48C6/I5** (GW1N-1 familia), sinteza i place & route u Gowin EDA alatu.
+Device: **GW1N-LV1QN48C6/I5** (GW1N-1 family), synthesis and place & route in the Gowin EDA tool.
 
-### Simulacija
+### Simulation
 
-Funkcionalna provjera rađena je sa **Verilator**om — C++ test bench (`Vproject.cpp`) generiše talasni oblik `.fst` koji se pregleda u GTKWave:
+Functional verification was done with **Verilator** — the C++ test bench (`Vproject.cpp`) generates a `.fst` waveform that is inspected in GTKWave:
 
 ```bash
 verilator --cc project.sv --exe tb.cpp --trace -Wno-fatal
 make -C obj_dir -f Vproject.mk && ./obj_dir/Vproject
 ```
 
-!!! info "Napomena o artefaktima"
-    Generisani build fajlovi (`obj_dir/`, `Vproject.cpp`, `.fst`) i sintetizni projekti nalaze se lokalno u `Data/PLS/`; na ovoj stranici su samo izvor i rezultati sinteze.
+!!! info "Note on artifacts"
+    The generated build files (`obj_dir/`, `Vproject.cpp`, `.fst`) and the synthesis projects are kept locally in `Data/PLS/`; this page contains only the source and the synthesis results.
 
-### Šta sam naučio
+### What I learned
 
-- Brojač od 25 bita je **lanac DFF-ova** — tek na tabeli resursa se vidi koliko logike „skriva" jedna linija `if (counter == N)`.
-- Razlika između **simulacije i silicijuma** je u timingu: Verilator ne zna ništa o ruteama, a `setup`/`hold` provjera dolazi tek nakon place & route-a.
-- Kombinatorni izlazi (`C0`–`C3`) su čisti dekoderi stanja — jednostavnije i brže od dodatnih registara.
+- A 25-bit counter is a **chain of DFFs** — only the resource table shows how much logic a single `if (counter == N)` line hides.
+- The difference between **simulation and silicon** is in timing: Verilator knows nothing about routing, and `setup`/`hold` checks only come after place & route.
+- The combinational outputs (`C0`–`C3`) are plain state decoders — simpler and faster than extra registers.
 
 ---
 
-## Dokumentacija i kod
+## Documentation and code
 
-| Artefakt | Lokacija |
+| Artefact | Location |
 | --- | --- |
-| LPC1114 asemblerski listing i PDF izvještaj | `Data/PA/` |
-| SystemVerilog izvori, Gowin projektat, Verilator simulacija | `Data/PLS/` |
+| LPC1114 assembly listing and PDF report | `Data/PA/` |
+| SystemVerilog sources, Gowin project, Verilator simulation | `Data/PLS/` |
