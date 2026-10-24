@@ -10,15 +10,24 @@ Design and programming of industrial control systems: a **Schneider** PLC + vari
 **Team:** E. Krdžalić, S. Muratagić, A. Šabić · role: programming the PLC–drive communication and the HMI visualisation
 
 !!! abstract "In one sentence"
-    A complete plant — **TM200CE24T** PLC, **ATV12H055M2** variable-frequency drive and **HMISTU855** touch HMI — was designed from the wiring diagram and cost estimate through to Modbus communication, drive function blocks and a multi-screen HMI project with user groups and passwords.
+    A complete plant — **TM200CE24T** PLC, **ATV12H055M2** variable-frequency drive and **HMISTU855** touch HMI — was designed from the wiring diagram through to Modbus communication, drive function blocks and a multi-screen HMI project with user groups and passwords.
 
 ### Problem
 
-Speed control of an induction motor is usually done with a variable-frequency drive, but the drive alone is not a system: the whole supply chain has to be defined (protection, isolation, E-STOP), along with communication between the PLC and the drive, and an operator visualisation with a hierarchy of access rights. The task was to design **the entire chain**: wiring diagram → hardware with cost estimate → PLC logic → Modbus → HMI.
+Speed control of an induction motor is usually done with a variable-frequency drive, but the drive alone is not a system: the whole supply chain has to be defined (protection, isolation, E-STOP), along with communication between the PLC and the drive, and an operator visualisation with a hierarchy of access rights. The task was to design **the entire chain**: wiring diagram → hardware selection → PLC logic → Modbus → HMI.
 
 ### Wiring diagram
 
-![Wiring diagram of the plant](../images/ia/principijelna-shema.png)
+The diagram was drawn in QElectroTech and split across three sheets — the supply side, the PLC/HMI wiring and the drive/motor power circuit.
+
+![Sheet 1 — AC and DC supply](../images/ia/wiring-1-ac-dc-supply.png)
+*Sheet 1/3 — "Napajanje AC i DC": AC and DC supply of the plant.*
+
+![Sheet 2 — PLC and HMI](../images/ia/wiring-2-plc-hmi.png)
+*Sheet 2/3 — "PLC i HMI": TM200CE24T inputs and outputs, the HMISTU855 and the Modbus link to the drive.*
+
+![Sheet 3 — ATV12 and induction motor](../images/ia/wiring-3-atv12-motor.png)
+*Sheet 3/3 — "ATV12 i asinhroni motor": drive power and control terminals, thermal overload relay and the motor.*
 
 The supply side runs from the main switch and fuses to the **ATV12** drive and from there through a **CA3SK20BD** contactor to the induction motor; the control side is fed from a 24 V DC supply protected by an **RCD (300 mA)**.
 
@@ -195,12 +204,9 @@ In the **Simulink** model the first-order system was implemented with an integra
 
 Larger hysteresis → **fewer heater switchings** (longer relay life) but **larger temperature ripple**; smaller hysteresis → more accurate temperature but rapid wear of the output relay. The chosen value kept the temperature inside the required interval with an acceptable number of cycles.
 
-!!! warning "Inconsistency found in the report"
-    The report text claims the system **cools faster** than it heats, but the measured constants say the opposite: τ<sub>cooling</sub> = 151.3 s > τ<sub>heating</sub> = 115.2 s. The correct interpretation is that **heating dominates** (a stronger source than the losses), so the system cools more slowly.
-
 ### Materials
 
-`Data/PAPU P2/` — EASY-SOFT project (ladder logic), PDF report, Simulink model, `.lvm` measurement recordings.
+[Report (PDF, 3.2 MB)](../attachments/two-position-temperature-control/papu-assignment-2-report.pdf){target=_blank} · [Simulink model, MATLAB scripts and measured data (ZIP, 197 KB)](../attachments/two-position-temperature-control/papu2-simulink-matlab-files.zip){target=_blank}
 
 ---
 
@@ -208,6 +214,7 @@ Larger hysteresis → **fewer heater switchings** (longer relay life) but **larg
 
 | Artefact | Location |
 | --- | --- |
-| IA term paper (PDF), wiring diagram, HMI project | `Data/IA_Projekat_Krdzalic_Muratagic_Sabic/` |
-| PAPU assignment 2 (EASY-SOFT, Simulink, report) | `Data/PAPU P2/` |
-| Activity log and cost estimate | attached to the IA paper |
+| IA term paper (PDF, 1.3 MB) | [Download](../attachments/induction-motor-speed-control/industrial-automation-term-paper.pdf){target=_blank} |
+| Wiring diagram, 3 sheets (PDF, 47 KB) | [Download](../attachments/induction-motor-speed-control/wiring-diagram.pdf){target=_blank} |
+| PAPU assignment 2 report (PDF, 3.2 MB) | [Download](../attachments/two-position-temperature-control/papu-assignment-2-report.pdf){target=_blank} |
+| PLC + HMI projects, editable schematic (`.qet`), activity logs (ZIP, 494 KB) | [Download](../attachments/induction-motor-speed-control/ia-plc-hmi-project-files.zip){target=_blank} |

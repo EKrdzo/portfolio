@@ -121,9 +121,6 @@ verilator --cc project.sv --exe tb.cpp --trace -Wno-fatal
 make -C obj_dir -f Vproject.mk && ./obj_dir/Vproject
 ```
 
-!!! info "Note on artifacts"
-    The generated build files (`obj_dir/`, `Vproject.cpp`, `.fst`) and the synthesis projects are kept locally in `Data/PLS/`; this page contains only the source and the synthesis results.
-
 ### What I learned
 
 - A 25-bit counter is a **chain of DFFs** — only the resource table shows how much logic a single `if (counter == N)` line hides.
@@ -136,5 +133,6 @@ make -C obj_dir -f Vproject.mk && ./obj_dir/Vproject
 
 | Artefact | Location |
 | --- | --- |
-| LPC1114 assembly listing and PDF report | `Data/PA/` |
-| SystemVerilog sources, Gowin project, Verilator simulation | `Data/PLS/` |
+| LPC1114 assembly report (PDF, 1.9 MB) | [Download](../attachments/ad-converter-assembly/pa-lpc1114-assembly-report.pdf){target=_blank} |
+| LPC1114 ADC + multiplexed 7-segment source (10 KB) | [Download](../attachments/ad-converter-assembly/lpc1114-adc-7seg-source.txt){target=_blank} |
+| FPGA project: RTL, constraints, Verilator testbench, P&R reports, bitstream (ZIP, 48 KB) | [Download](../attachments/fpga-gowin-verilator/pls-fpga-project-files.zip){target=_blank} |

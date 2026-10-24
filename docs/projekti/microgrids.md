@@ -230,7 +230,9 @@ The compiled model runs in Typhoon HIL Control Center against a custom SCADA pan
 More advanced control methods — **MPC** (Model Predictive Control) and artificial-intelligence-based algorithms — for higher energy efficiency and resilience to unforeseen disturbances.
 
 !!! info "Materials"
-    Thesis source and PDF: `Data/ETF_latex_template_MoE/` (outside the portfolio repository) — the LaTeX chapters plus every figure original. The plots and SCADA views above are those thesis figures, converted from EPS where needed and relabelled with English filenames.
+    [Bachelor's thesis (PDF, 0.9 MB)](../attachments/microgrid-hil-thesis/microgrid-typhoon-hil-thesis.pdf){target=_blank} — *Modeliranje i simulacija sistema vođenja mikromreže u Typhoon HIL okruženju*, mentor v. prof. dr Senad Huseinbegović, July 2026.
+
+    [Thesis LaTeX source (ZIP, 56 KB)](../attachments/microgrid-hil-thesis/microgrid-thesis-latex-source.zip){target=_blank} — five chapters, the appendix C source, the bibliography.
 
 ---
 
@@ -326,4 +328,6 @@ The converter, both regulators and the pack were assembled into a single **Typho
 *User-defined battery model in Typhoon HIL, and the SCADA trace of charging current against battery voltage during the run.*
 
 !!! info "Artifacts"
-    MATLAB scripts: `Data/Boost_charging/Prilog/` — `T1.m`–`T4.m`, with the `T5.tse` model alongside. Term paper: `Data/Boost_charging_seminarski.pdf`; the LaTeX source and all figure exports (PNG/JPG) are in `Data/Boost_charging_seminarski/`. Figures shown here are the exported files, relabelled with English filenames.
+    [Term paper (PDF, 0.6 MB)](../attachments/boost-converter/boost-charging-term-paper.pdf){target=_blank}
+
+    [MATLAB scripts + paper source (ZIP, 27 KB)](../attachments/boost-converter/boost-matlab-and-latex-source.zip){target=_blank} — `T1.m`–`T4.m`, the `T5.tse` model and the paper's `main.tex`.

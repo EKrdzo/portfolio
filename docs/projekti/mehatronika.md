@@ -81,7 +81,6 @@ Integrating sensors, a computer and a flight controller into one system — from
 
 | Artefact | Location |
 | --- | --- |
-| PDF report | `Data/MEH_Projektni_Zadatak_Krdzalic_Muratagic_Sabic/` |
-| 3D model of the enclosure | `Drone Case Model.step` |
-| Enclosure documentation | `MEH_Pi_Case.pdf` |
-| Test flight recording | `MEH_Test_Flight.mp4` |
+| Drone project report (PDF, 3.4 MB) | [Download](../attachments/drone-pixhawk-raspberry-pi/mechatronics-drone-report.pdf){target=_blank} |
+| Enclosure documentation (PDF, 0.8 MB) | [Download](../attachments/drone-pixhawk-raspberry-pi/enclosure-3d-documentation.pdf){target=_blank} |
+| Enclosure 3D model (STEP, 953 KB) | [Download](../attachments/drone-pixhawk-raspberry-pi/drone-enclosure-model.step){target=_blank} |

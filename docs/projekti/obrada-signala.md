@@ -114,5 +114,5 @@ Signal processing and automatic logging of data series were done in **LabVIEW** 
 
 | Artefact | Location |
 | --- | --- |
-| PAPU assignment 1 (`lin.m`, `LV5.lvproj`, `.lvm` measurements, PDF) | `Data/PAPU p1/` |
-| PAPU assignment 3 (Simulink model, PID parameters, PDF) | `Data/PAPU_Projekat3/` |
+| PAPU assignment 1 — LabVIEW VIs, MATLAB scripts, raw `.lvm` measurements (ZIP, 1.9 MB) | [Download](../attachments/papu-assignment-1/papu1-labview-matlab-measurements.zip){target=_blank} |
+| PAPU assignment 3 — report `main.tex` with its EPS/PNG figures (ZIP, 678 KB) | [Download](../attachments/papu-assignment-3/papu3-report-latex-and-figures.zip){target=_blank} |

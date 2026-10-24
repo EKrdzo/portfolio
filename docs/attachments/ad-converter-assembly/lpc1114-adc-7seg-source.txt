@@ -1,0 +1,372 @@
+// =========================================================================
+// FINALNI KOD: LPC1114FN28 - ADC + 7-SEG DISPLAY (Multiplex)
+// =========================================================================
+// Hardware Konfiguracija:
+// -----------------------
+// ANODE (Cifre): P1.4, P1.5, P1.9, P1.7 -> Spojene preko PNP tranzistora?
+//                Aktivne na LOW (0 = ON, 1 = OFF)
+// SEGMENTI:      P0.1, P0.2, P0.3, P0.6, P0.7, P0.8, P0.9
+//                Aktivni na LOW (0 = ON, 1 = OFF)
+// POTENCIOMETAR: P0.11 (AD0)
+// =========================================================================
+
+        .syntax unified
+        .cpu cortex-m0
+        .thumb
+        .global Vector_Table, start
+
+        .text
+Vector_Table:
+    .word     0x10001000          // Top of Stack
+    .word     start               // Reset Handler
+    .word     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+.thumb_func
+start:
+
+// =========================================================================
+// 1. SYSTEM CONFIG
+// =========================================================================
+        // Uključi clock za GPIO, ADC i IOCON
+        ldr R1, SYSAHBCLKCTRL
+        ldr R0, [R1]
+        ldr R2, =0x12040        // Bit 6(GPIO), 13(ADC), 16(IOCON)
+        orrs R0, R0, R2
+        str R0, [R1]
+
+        // Uključi napajanje za ADC (PDRUNCFG)
+        ldr R1, PDRUNCFG_ADDR
+        ldr R0, [R1]
+        movs R2, #0x10          // Bit 4 (ADC power)
+        bics R0, R0, R2         // Clear bit to power UP
+        str R0, [R1]
+
+        // Konfiguriraj P0.11 kao ADC Input (Func 2)
+        ldr R1, IOCON_PIO0_11
+        movs R2, #0x02          // Mode 2 = AD0
+        str R2, [R1]
+
+        // ADC Control registar setup
+        ldr R1, AD0CR_ADDR
+        ldr R0, =0x00200B01     // Select AD0, Burst=0, 10-bit
+        str R0, [R1]
+
+// =========================================================================
+// 2. PIN CONFIG (IOCON)
+// =========================================================================
+        // --- Cifre (Port 1) ---
+        movs R2, #0x00          // Func 0 (GPIO), No Pull
+
+        // P1.4
+        ldr R1, IOCON_PIO1_4
+        str R2, [R1]
+
+        // P1.5
+        ldr R1, IOCON_PIO1_5
+        ldr R0, [R1]
+        movs R3, #0x07          // Clear function bits
+        bics R0, R0, R3
+        str R0, [R1]
+
+        // P1.9 (FIXED ADDRESS)
+        ldr R1, IOCON_PIO1_9    // Sada pokazuje na 0x400440B0
+        str R2, [R1]
+
+        // P1.7
+        ldr R1, IOCON_PIO1_7
+        str R2, [R1]
+
+        // --- Segmenti (Port 0) ---
+        // Svi postavljeni na Func 0 (GPIO)
+        movs R2, #0x00
+
+        ldr R1, IOCON_PIO0_1
+        str R2, [R1]
+        ldr R1, IOCON_PIO0_2
+        str R2, [R1]
+        ldr R1, IOCON_PIO0_3
+        str R2, [R1]
+        ldr R1, IOCON_PIO0_6
+        str R2, [R1]
+        ldr R1, IOCON_PIO0_7
+        str R2, [R1]
+        ldr R1, IOCON_PIO0_8
+        str R2, [R1]
+        ldr R1, IOCON_PIO0_9
+        str R2, [R1]
+
+// =========================================================================
+// 3. DIRECTION CONFIG (GPIO DIR)
+// =========================================================================
+
+        // --- PORT 1 (Cifre) ---
+        ldr R1, GPIO1DIR
+        ldr R0, [R1]
+        ldr R2, DIR_MASK_P1     // Maska 0x2F0 (P1.4-P1.7 + P1.9)
+        orrs R0, R0, R2
+        str R0, [R1]
+
+        // --- PORT 0 (Segmenti) --- !!! KLJUČNI FIX !!!
+        // Moramo reći čipu da su pinovi segmenata IZLAZI
+        ldr R1, GPIO0DIR
+        ldr R0, [R1]
+        ldr R2, SAFE_MASK       // Maska 0x3CE (Pinovi 1,2,3,6,7,8,9)
+        orrs R0, R0, R2         // Postavi na 1 (Output)
+        str R0, [R1]
+
+        b main_loop
+
+// -------------------------------------------------------------------------
+// PODACI BLOK 1 (Init Podaci)
+// -------------------------------------------------------------------------
+        .align 2
+SYSAHBCLKCTRL:  .word 0x40048080
+PDRUNCFG_ADDR:  .word 0x40048238
+AD0CR_ADDR:     .word 0x4001C000
+IOCON_PIO0_11:  .word 0x40044074
+
+// Maska za segmente na Portu 0 (P0.1,2,3 i P0.6,7,8,9)
+SAFE_MASK:      .word 0x000003CE
+DIR_MASK_P1:    .word 0x000002F0
+
+// IOCON Adrese Port 0
+IOCON_PIO0_1:   .word 0x40044010
+IOCON_PIO0_2:   .word 0x4004401C
+IOCON_PIO0_3:   .word 0x4004402c
+IOCON_PIO0_6:   .word 0x4004404c
+IOCON_PIO0_7:   .word 0x40044050
+IOCON_PIO0_8:   .word 0x40044060
+IOCON_PIO0_9:   .word 0x40044064
+
+// IOCON Adrese Port 1
+IOCON_PIO1_4:   .word 0x40044094
+IOCON_PIO1_5:   .word 0x400440A0
+IOCON_PIO1_7:   .word 0x400440A8
+IOCON_PIO1_9:   .word 0x400440B0  // <--- ISPRAVNA ADRESA
+
+GPIO0DIR:       .word 0x50008000
+GPIO1DIR:       .word 0x50018000
+
+// =========================================================================
+// GLAVNA PETLJA
+// =========================================================================
+main_loop:
+        // A) ADC Read
+        bl get_adc_value        // Rezultat je u R0 (npr. 512)
+
+        // --- MATH: KONVERZIJA 0-1023 -> 0-3300 mV ---
+        ldr R1, =3300
+        muls R0, R1, R0         // R0 = 512 * 3300 = 1689600
+        lsrs R0, R0, #10        // R0 = 1689600 / 1024 = 1650
+
+        mov R7, R0              // R7 sada sadrži 1650 (mV)
+
+        // B) Razdvajanje znamenki (Ostatak koda ostaje isti)
+        mov R0, R7
+
+        // Tisuće (R1)
+        movs R1, #0
+        ldr R5, =1000
+loop_t: cmp R0, R5
+        blt done_t
+        subs R0, R0, R5
+        adds R1, R1, #1
+        b loop_t
+done_t:
+
+        // Stotine (R2)
+        movs R2, #0
+        ldr R5, =100
+loop_s: cmp R0, R5
+        blt done_s
+        subs R0, R0, R5
+        adds R2, R2, #1
+        b loop_s
+done_s:
+
+        // Desetice (R3)
+        movs R3, #0
+        ldr R5, =10
+loop_d: cmp R0, R5
+        blt done_d
+        subs R0, R0, R5
+        adds R3, R3, #1
+        b loop_d
+done_d:
+
+        // Jedinice (R4)
+        mov R4, R0
+
+        // C) PRIKAZ (Multiplexing)
+        ldr R5, GPIO1DATA
+        ldr R6, GPIO0DATA
+
+        // Priprema maske za gašenje svih cifara (Bits 4,5,7,9)
+        // Maska 0x2F0
+        movs R7, #0x2F
+        lsls R7, R7, #4
+
+        // --------------------------------------------------
+        // --- D1 (P1.5) --- hiljade
+        // --------------------------------------------------
+        // 1. Ugasi SVE cifre (High = OFF)
+        ldr R0, [R5]
+        orrs R0, R0, R7
+        str R0, [R5]
+
+        // 2. Postavi segmente (Active Low)
+        ldr R0, =SEG_TABLE
+        movs R1, R1
+        lsls R1, R1, #2
+        adds R0, R0, R1
+        ldr R0, [R0]
+        str R0, [R6]
+
+        // 3. Upali D1 (P1.5 Low = ON)
+        ldr R0, [R5]
+        movs R1, #0x20
+        bics R0, R0, R1
+        str R0, [R5]
+
+        bl delay
+
+        // --------------------------------------------------
+        // --- D2 (P1.9) --- stotice
+        // --------------------------------------------------
+        // 1. Ugasi SVE
+        ldr R0, [R5]
+        movs R1, #0x2F
+        lsls R1, R1, #4
+        orrs R0, R0, R1
+        str R0, [R5]
+
+        // 2. Postavi segmente
+        ldr R0, =SEG_TABLE
+        movs R1, R2
+        lsls R1, R1, #2
+        adds R0, R0, R1
+        ldr R0, [R0]
+        str R0, [R6]
+
+        // 3. Upali D2 (P1.9 Low = ON)
+        ldr R0, [R5]
+        movs R1, #0x02
+        lsls R1, R1, #8         // R1 = 0x200
+        bics R0, R0, R1
+        str R0, [R5]
+
+        bl delay
+
+        // --------------------------------------------------
+        // --- D3 (P1.7) --- desetice
+        // --------------------------------------------------
+        // 1. Ugasi SVE
+        ldr R0, [R5]
+        movs R1, #0x2F
+        lsls R1, R1, #4
+        orrs R0, R0, R1
+        str R0, [R5]
+
+        // 2. Postavi segmente
+        ldr R0, =SEG_TABLE
+        movs R1, R3
+        lsls R1, R1, #2
+        adds R0, R0, R1
+        ldr R0, [R0]
+        str R0, [R6]
+
+        // 3. Upali D3 (P1.7 Low = ON)
+        ldr R0, [R5]
+        movs R1, #0x80
+        bics R0, R0, R1
+        str R0, [R5]
+
+        bl delay
+
+        // --------------------------------------------------
+        // --- D4 (P1.4) --- jedinice
+        // --------------------------------------------------
+        // 1. Ugasi SVE
+        ldr R0, [R5]
+        movs R1, #0x2F
+        lsls R1, R1, #4
+        orrs R0, R0, R1
+        str R0, [R5]
+
+        // 2. Postavi segmente
+        ldr R0, =SEG_TABLE
+        movs R1, R4
+        lsls R1, R1, #2
+        adds R0, R0, R1
+        ldr R0, [R0]
+        str R0, [R6]
+
+        // 3. Upali D4 (P1.4 Low = ON)
+        ldr R0, [R5]
+        movs R1, #0x10
+        bics R0, R0, R1
+        str R0, [R5]
+
+        bl delay
+
+        b main_loop
+
+// -------------------------------------------------------------------------
+// PODACI BLOK 2 (Runtime)
+// -------------------------------------------------------------------------
+        .align 2
+GPIO0DATA:      .word 0x50003ffc
+GPIO1DATA:      .word 0x50013ffc
+
+SEG_TABLE:
+    .word 0x00000200    // 0
+    .word 0x000003C2    // 1
+    .word 0x00000108    // 2
+    .word 0x00000180    // 3
+    .word 0x000000C2    // 4
+    .word 0x00000084    // 5
+    .word 0x00000004    // 6
+    .word 0x000003C0    // 7
+    .word 0x00000000    // 8
+    .word 0x00000080    // 9
+
+// =========================================================================
+// SUBRUTINE
+// =========================================================================
+
+get_adc_value:
+        push {R1, R2, LR}
+        ldr R1, AD0CR_ADDR_2
+        ldr R0, [R1]
+        movs R2, #1
+        lsls R2, R2, #24        // Start conversion bit
+        orrs R0, R0, R2
+        str R0, [R1]
+wait_adc:
+        ldr R1, AD0GDR_ADDR
+        ldr R0, [R1]
+        cmp R0, #0
+        bge wait_adc            // Wait until DONE bit (31) is 1 (Negative number)
+        lsrs R0, R0, #6
+        ldr R2, =0x3FF
+        ands R0, R0, R2
+        pop {R1, R2, PC}
+
+delay:
+        push {R0, LR}
+        ldr R0, DELAY_VAL_2
+wait_loop:
+        subs R0, R0, #1
+        bne wait_loop
+        pop {R0, PC}
+
+// -------------------------------------------------------------------------
+// PODACI BLOK 3 (Subrutine Data)
+// -------------------------------------------------------------------------
+        .align 2
+AD0CR_ADDR_2:   .word 0x4001C000
+AD0GDR_ADDR:    .word 0x4001C004
+
+// BRZINA OSVJEŽAVANJA (cca 1 sekunda za testiranje)
+// Kad sve proradi, smanjite na 0x1800 za normalan prikaz
+DELAY_VAL_2:    .word 0x800

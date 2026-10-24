@@ -56,8 +56,8 @@ if (!(v_meas >= 0.90f * V_NOM && v_meas <= 1.10f * V_NOM) ||
 
 | Item | Detail |
 | --- | --- |
-| Thesis | *Modelling and simulation of a microgrid energy-management system in the Typhoon HIL environment*, ETF Sarajevo, July 2026. |
+| Thesis | *Modelling and simulation of a microgrid energy-management system in the Typhoon HIL environment*, ETF Sarajevo, July 2026 — [download the thesis (PDF, 0.9 MB)](attachments/microgrid-hil-thesis/microgrid-typhoon-hil-thesis.pdf){target=_blank} |
 | Supervisor | Associate Professor Senad Huseinbegović, PhD |
-| Source materials | project PDFs, Simulink/EASY-SOFT/HMI projects and MATLAB scripts available locally (`Data/`) |
+| Source materials | report PDFs and project source archives, downloadable from each project page |
 
 Contact details and education: [Contact & CV](kontakt.md).
