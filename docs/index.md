@@ -10,7 +10,7 @@ Every page comes from a **real project assignment or term paper** — each one c
 | --- | --- | --- |
 | **Modelling and simulation of a microgrid energy-management system in the Typhoon HIL environment** *(thesis)* | HIL 402 in real time, rule-based EMS in **C** on a **Raspberry Pi 5**, ETH VE communication, grid-connected and islanded modes | [Microgrid & Power Electronics](projekti/microgrids.md) |
 | **Boost converter for charging an 18650 pack** | 13S4P pack, 48 V / 10 Ah, CC-CV profile, L and C design, state-space model and transfer function, MATLAB, Typhoon HIL | [Microgrid & Power Electronics](projekti/microgrids.md) |
-| **Speed-control plant for an induction motor** | **Schneider** TM200 + ATV12 + HMISTU855, Modbus, drive function blocks, HMI with access hierarchy, wiring diagram and cost estimate | [PLC & Automation](projekti/plc-automation.md) |
+| **Speed-control plant for an induction motor** | **Schneider** TM200 + ATV12 + HMISTU855, Modbus, drive function blocks, HMI with access hierarchy, wiring diagram | [PLC & Automation](projekti/plc-automation.md) |
 | **Two-position temperature control** | **Eaton easy512**, EASY-SOFT ladder diagram, first-order system identification from measurements, Simulink verification | [PLC & Automation](projekti/plc-automation.md) |
 | **PID speed control of a DC motor** | identification (tachogenerator + MCC card), **MATLAB PID Tuner**, anti-windup, simulation vs. experiment | [Signal Processing & Simulation](projekti/obrada-signala.md) |
 | **NTC thermistor linearisation + LabVIEW** | optimisation of R1 (`fminsearch`, SSE), acquisition in LabVIEW, comparison of upsweep/downsweep measurements | [Signal Processing & Simulation](projekti/obrada-signala.md) |

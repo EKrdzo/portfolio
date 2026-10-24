@@ -46,19 +46,6 @@ The supply side runs from the main switch and fuses to the **ATV12** drive and f
 
 *ATV12H055M2 — U/f curve and Modbus address; TM200CE24T — 24 I/O points, built-in Modbus port; HMISTU855 — 5.7" resistive touch screen.*
 
-### Cost estimate (total KM 2,824.10)
-
-| Item | Amount (KM) |
-| --- | --- |
-| HMI HMISTU855 | 1,575.37 |
-| PLC TM200CE24T | 604.55 |
-| Drive ATV12H055M2 | 460.30 |
-| Contactor CA3SK20BD | 70.31 |
-| Thermal relay RSL1PRBU | 48.88 |
-| RCD 300 mA | 41.10 |
-| Harmony XB5 (E-STOP) | 17.59 |
-| Cable and sundries | 6.00 |
-
 ### PLC side — Machine Expert Basic
 
 Communication with the drive goes through the **ATV drive function blocks**, which hide the Modbus registers behind an API with an enable/execute handshake:
@@ -141,17 +128,6 @@ hmi_Greska := MC_ReadStatus_ATV.Error;
 | **Admin** | ✔ | ✔ | ✔ | ✔ | ✔ |
 
 The design was justified verbally by referencing **NUREG-0700** (control room) and the **Rockwell Automation Guide to Effective Machine Control**, together with self-criticism: *the STOP button stayed permanently red even when the machine was stopped, which contradicts the recommendation that colour should reflect the current state.*
-
-### My contribution (17 h, from the activity log)
-
-| Activity | Hours |
-| --- | :-: |
-| Learning the Modbus protocol and ATV12 registers | 4 |
-| Drive configuration and PLC ↔ ATV12 communication | 4 |
-| Reconfiguration after the first failed test | 3 |
-| Testing the first version of the program | 3 |
-| Testing the final version | 2 |
-| Drawing the wiring diagram | 1 |
 
 ### What I learned
 
