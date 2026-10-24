@@ -118,3 +118,23 @@
   transition: color 125ms, background-color 125ms, opacity 125ms,
     transform 125ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 125ms;
 }
+
+/* Tab row on narrow windows.
+
+   The theme hides `.md-tabs` below 76.234375em (1220px) and moves the top-level
+   pages into the drawer, which leaves the header bare on a half-screen window.
+   Restoring the row from 56.25em (900px) covers the widths where seven short
+   labels still fit; below that the drawer takes over as intended.
+
+   Only `display` is width-gated in the theme — `.md-tabs__list`, `__item` and
+   `__link` apply at every width — so nothing else needs restating, and
+   `.md-tabs__list` already carries `overflow: auto` with `white-space: nowrap`
+   and hidden scrollbars. A window narrower than the labels need therefore
+   scrolls sideways instead of wrapping. extra.css loads after the theme sheet,
+   so this wins on source order at equal specificity.
+*/
+@media screen and (min-width: 56.25em) {
+  .md-tabs {
+    display: block;
+  }
+}

@@ -47,9 +47,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - Microgrid & Power Electronics: projekti/microgrids.md
+  - Microgrids: projekti/microgrids.md
   - PLC & Automation: projekti/plc-automation.md
-  - Signal Processing & Simulation: projekti/obrada-signala.md
+  - Signal Processing: projekti/obrada-signala.md
   - Embedded & FPGA: projekti/embedded-fpga.md
-  - Mechatronics & Robotics: projekti/mehatronika.md
-  - Contact & CV: kontakt.md
+  - Mechatronics: projekti/mehatronika.md
+  - Contact: kontakt.md
