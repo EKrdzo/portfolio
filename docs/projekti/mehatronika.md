@@ -14,6 +14,7 @@ Integrating sensors, a computer and a flight controller into one system — from
 
 ### System architecture
 
+<div class="svg-diagram">
 <svg viewBox="0 0 900 250" role="img" aria-label="Architecture: Raspberry Pi 4 (ROS Noetic) – MAVLink – Pixhawk 4 – ESCs/motors" style="width:100%;height:auto;font-family:inherit;font-size:14px">
   <style>
     .box{fill:currentColor;fill-opacity:.06;stroke:currentColor;stroke-opacity:.45;stroke-width:1.5}
@@ -25,26 +26,23 @@ Integrating sensors, a computer and a flight controller into one system — from
   <text class="txt" x="135" y="70" text-anchor="middle">Raspberry Pi 4 Model B</text>
   <text class="txt sm" x="135" y="92" text-anchor="middle">Ubuntu Server 20.04 LTS</text>
   <text class="txt sm" x="135" y="110" text-anchor="middle">ROS Noetic + MAVROS</text>
-
   <rect class="box" x="335" y="40" width="230" height="96" rx="6"/>
   <text class="txt" x="450" y="70" text-anchor="middle">Pixhawk 4</text>
   <text class="txt sm" x="450" y="92" text-anchor="middle">STM32F765 · Cortex-M7</text>
   <text class="txt sm" x="450" y="110" text-anchor="middle">TELEM1/2 · GPS1/2 · DEBUG</text>
-
   <rect class="box" x="650" y="40" width="230" height="96" rx="6"/>
   <text class="txt" x="765" y="70" text-anchor="middle">Motors and sensors</text>
   <text class="txt sm" x="765" y="92" text-anchor="middle">up to 16 ESC outputs</text>
   <text class="txt sm" x="765" y="110" text-anchor="middle">accel · gyro · compass · RC</text>
-
   <line class="ln" x1="250" y1="88" x2="335" y2="88"/>
   <text class="txt sm" x="292" y="78" text-anchor="middle">UART</text>
   <text class="txt sm" x="292" y="160" text-anchor="middle">MAVLink / MAVROS</text>
   <line class="ln" x1="565" y1="88" x2="650" y2="88"/>
   <text class="txt sm" x="607" y="78" text-anchor="middle">PWM/DShot</text>
-
   <rect class="box" x="20" y="180" width="860" height="50" rx="6"/>
   <text class="txt" x="450" y="211" text-anchor="middle">Modular enclosure (upper + lower part) — 3D printed, FFF</text>
 </svg>
+</div>
 
 | Layer | Hardware / software |
 | --- | --- |
